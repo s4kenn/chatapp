@@ -168,3 +168,18 @@ export const updateProfile = async (req, res) => {
     }
 
 }
+
+export const checkAuth = (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            message: "User authenticated",
+            data: req.user
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
