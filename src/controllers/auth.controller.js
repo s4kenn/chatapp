@@ -69,8 +69,64 @@ export const signup = async (req, res) => {
 
 }
 
-export const login = (req, res) => {
+export const login = async (req, res) => {
+
+    const { email, password } = req.body
+    try {
+
+        const doesUserExist = await User.findOne({ email })
+
+        if (!doesUserExist) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        const isValidPassword = await bcrypt.compare(password, doesUserExist.password)
+
+        if (!isValidPassword) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid password"
+            })
+        }
+
+        generateToken(doesUserExist._id, res)
+        res.status(200).json({
+            success: true,
+            message: "User logged in successfully",
+            data: doesUserExist
+        })
+
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+
+    }
+
 }
 
 export const logout = (req, res) => {
+
+    try {
+        res.cookie("jwt", "", {
+            maxAge: 0
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully"
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+
 }
