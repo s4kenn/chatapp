@@ -13,7 +13,7 @@ const MessageSchema = new mongoose.Schema({
     }, text: {
         type: String,
     }, image: {
-        image: String
+        type: String
     }
 
 }, {
